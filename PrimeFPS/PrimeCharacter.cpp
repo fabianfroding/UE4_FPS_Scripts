@@ -7,6 +7,12 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
 
+#include "Projectile.h"
+#include "Animation/AnimInstance.h"
+#include "Kismet/GameplayStatics.h"
+
+#include "PrimeFPSGameMode.h"
+
 // Sets default values
 APrimeCharacter::APrimeCharacter()
 {
@@ -53,6 +59,10 @@ void APrimeCharacter::BeginPlay()
 		FAttachmentTransformRules::SnapToTargetNotIncludingScale,
 		TEXT("GripPoint"));
 
+	World = GetWorld();
+
+	AnimInstance = HandsMesh->GetAnimInstance();
+
 }
 
 // Called every frame
@@ -82,6 +92,28 @@ void APrimeCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 
 void APrimeCharacter::OnFire()
 {
+	if (World != NULL) {
+		SpawnRotation = GetControlRotation();
+		SpawnLocation = ((MuzzleLocation != nullptr) ? 
+			MuzzleLocation->GetComponentLocation() : 
+			GetActorLocation()) + SpawnRotation.RotateVector(GunOffset);
+
+		// This defines how the actor will handle spawning right "on top of" a collision.
+		// In this case, it will attempt to find a nearby non-colliding location, but will not spawn unless one is found.
+		FActorSpawnParameters ActorSpawnParams;
+		ActorSpawnParams.SpawnCollisionHandlingOverride =
+			ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
+
+		World->SpawnActor<AProjectile>(Projectile, SpawnLocation, SpawnRotation, ActorSpawnParams);
+
+		if (FireSound != NULL) {
+			UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
+		}
+
+		if (FireAnimation != NULL && AnimInstance != NULL) {
+			AnimInstance->Montage_Play(FireAnimation, 1.0f);
+		}
+	}
 }
 
 void APrimeCharacter::MoveForward(float Value)
