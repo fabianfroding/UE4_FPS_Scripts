@@ -34,10 +34,10 @@ public:
 			UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
 			bool bFromSweep, const FHitResult& Hit);
 
-	UPROPERTY(VisibleDefaultOnly, Category = Enemy)
+	UPROPERTY(VisibleDefaultsOnly, Category = Enemy)
 		class UAIPerceptionComponent* AIPerComp;
 
-	UPROPERTY(VisibleDefaultOnly, Category = Enemy)
+	UPROPERTY(VisibleDefaultsOnly, Category = Enemy)
 		class UAISenseConfig_Sight* SightConfig;
 
 	UFUNCTION()
