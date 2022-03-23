@@ -11,7 +11,7 @@
 #include "Animation/AnimInstance.h"
 #include "Kismet/GameplayStatics.h"
 
-#include "PrimeFPSGameMode.h"
+#include "PrimeFPS_GameMode.h"
 
 // Sets default values
 APrimeCharacter::APrimeCharacter()
@@ -147,6 +147,14 @@ void APrimeCharacter::DealDamage(float DamageAmount)
 	if (Health <= 0.0f) 
 	{
 		// Restart game.
+		// TODO: Implement Observer pattern.
+		APrimeFPS_GameMode* MyGameMode =
+			Cast<APrimeFPS_GameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+
+		if (MyGameMode)
+		{
+			MyGameMode->RestartGameplay(false);
+		}
 
 		Destroy();
 	}

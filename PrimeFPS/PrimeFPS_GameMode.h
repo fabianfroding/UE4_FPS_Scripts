@@ -13,5 +13,28 @@ UCLASS()
 class PRIMEFPS_API APrimeFPS_GameMode : public AGameMode
 {
 	GENERATED_BODY()
+
+public:
+
+	void RestartGameplay(bool Won);
+
+private:
+
+	void ResetLevel();
+
+public:
+
+	UPROPERTY(BlueprintReadOnly)
+		int TimerCount = 300;
+
+private:
+
+	FTimerHandle CountDownTimerHandle = FTimerHandle();
+
+	void CountdownTimer();
+
+public:
+
+	void BeginPlay() override;
 	
 };
